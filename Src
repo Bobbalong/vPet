@@ -1,0 +1,29 @@
+package vPetRes;
+
+import java.util.*;
+import java.lang.*;
+
+public class vPetSrc {
+	
+	String vName;
+	String vDOBt;
+	String[] vDOB = {"0", "0"};
+	boolean isActive;
+	float vStomach;
+	
+	public vPetSrc (String name, boolean active, String DOBt, String DOBd, String millis, float stomach) {
+		
+		vName = name;
+		isActive = active;
+		vDOB[0] = DOBt;
+		vDOB[1] = DOBd;
+		vStomach = stomach;
+		
+	}
+	
+	//public static void main (String[] args) {
+		
+		//vPetSrc teaserPet = new vPetSrc ("Steve", true);
+		
+	//}
+}
