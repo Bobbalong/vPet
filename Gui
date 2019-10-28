@@ -1,48 +1,98 @@
+
 package vPetRes;
 
-import java.awt.EventQueue;
 import javax.swing.*;
 import java.util.*;
 import java.lang.*;
+import java.io.*;
+import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.CaretEvent;
 
 
 public class vPetGui {
+	
+	static String FieldOneLive;
+	static String ownerName = "";
+	static String saveStateRes;
+	static String writeStateRes;
 		
 	static String vPetName;
 	static String vPetActive;
 	static String vPetDOBt;
 	static String vPetDOBd;
+	static long vPetMillisBorn;
 	static double vPetStomach;
+	static String[] vPetHeaders = {"vPetActive", "vPetName", "vPetMillisBorn", "vPetDOBt", "vPetDOBd", "vPetStomach"};
+	static ArrayList<String> vPetValue = new ArrayList<String>();
+	static ArrayList<String> saveDataOut = new ArrayList<String>();
+	
+	static String vPetStomachGauge;
+	static double stomachHungerRate;
 
 	static long currentMillisTag;
-	
+	static long vPetMillisAlive;
 	String nowTime;
+	int vPetFrame;
+	int vPetFrameSlide;
+	char vPetFrameSlideDir = 'R';
+	double vPetRng = rnJesus(100);
+	double vPetBlink;
+	
 	
 	private JFrame frmVpet;
 	private JLabel lblClock;
-	private JTable vPetTable;
 	private JLabel lblStomach;
+	private JLabel lblLivedata;
+	private JLabel lblImagemain;
+	private JTextField textFieldOne;
 
 	public static void main(String[] args) {
+		
+		
+		System.out.println("Main/top");
+		System.out.println(vPetValue.size()+" "+vPetSrc.saveDataIn.size());
+		
 		currentMillisTag = System.currentTimeMillis();
+		
 		String[] tempDOBt = vPetCal();
-		vPetSrc teaserPet = new vPetSrc ("Steve", true, tempDOBt[1], tempDOBt[0], ""+currentMillisTag, 50);
-		vPetName = teaserPet.vName;
+		vPetSrc teaserPet = new vPetSrc ("Steve", true, tempDOBt[1], tempDOBt[0], currentMillisTag, 50);
+
 		if (teaserPet.isActive) {
 			vPetActive = "Yes";
 		} else {
 			vPetActive = "No";
-			}
-		vPetDOBt = ""+teaserPet.vDOB[0];
-		vPetDOBd = ""+teaserPet.vDOB[1];
-		vPetStomach = teaserPet.vStomach;
+		}
+		vPetValue.add(""+vPetActive);
 		
-	    
+		
+		vPetName = teaserPet.vName;
+		vPetValue.add(""+vPetName);
+		
+		vPetMillisBorn = teaserPet.millisBorn;
+		vPetValue.add(""+vPetMillisBorn);
+		
+		vPetDOBt = teaserPet.vDOB[0];
+		vPetValue.add(""+vPetDOBt);
+		
+		vPetDOBd = teaserPet.vDOB[1];
+		vPetValue.add(""+vPetDOBd);
+		
+		vPetStomach = teaserPet.vStomach;
+		vPetValue.add(""+vPetStomach);
+		
+		stomachHungerRate = 0.1;
+
+		vPetSrc.save();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -53,6 +103,9 @@ public class vPetGui {
 				}
 			}
 		});
+		vPetSrc.saveState('C');
+		System.out.println(vPetValue.size()+" "+vPetSrc.saveDataIn.size());
+		System.out.println("Main/end");
 	}
 	
 	public void clock() {
@@ -62,6 +115,7 @@ public class vPetGui {
 				try {
 					
 					while(true) {
+					//System.out.println("clock - Cycle");
 					
 					currentMillisTag = System.currentTimeMillis();
 					
@@ -75,9 +129,14 @@ public class vPetGui {
 					int hour = cal.get(Calendar.HOUR);
 					
 					lblClock.setText("("+currentMillisTag+")");
-					lblStomach.setText("H:"+Math.round(vPetStomach*100)/100.0);
+					lblLivedata.setText(""+Math.round(vPetStomach * 100.0) / 100.0+" | "+vPetRng+" | "+vPetMillisAlive+" | "+FieldOneLive+" | "+saveStateRes+" | "+writeStateRes);
+					lblStomach.setText("H:"+vPetStomachGauge);
 					
-					vPetStomach = vPetStomach - 0.1;
+					vPetStomach = vPetStomach - stomachHungerRate;
+					vPetStomachGaugeChk();
+					vPetRng = Math.round((rnJesus(100) * 100.0) / 100.0);
+					
+					vPetMillisAlive = currentMillisTag - vPetMillisBorn;
 					
 					sleep(1000);
 					
@@ -92,15 +151,90 @@ public class vPetGui {
 		clock.start();
 	}
 	
+	public void vPetAnim() {
+		
+		vPetFrame = 0;
+		vPetFrameSlide = 20;
+		
+		Thread vPetAnim = new Thread() {
+			public void run() {
+				try {
+					
+					while(true) {
+						//System.out.println("vPetAnim - Cycle");
+						switch(vPetFrame) {
+						case 0:
+							lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleOne.png")));
+							vPetFrame++;
+							break;
+						case 1:
+							lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleTwo.png")));
+							vPetFrame++;
+							break;
+						case 2:
+							lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleThree.png")));
+							vPetFrame++;
+							break;
+						case 3:
+							if (vPetBlink>75)  {
+									lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/blink/slimeBlinkOne.png")));
+									sleep(150);
+									lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/blink/slimeBlinkTwo.png")));
+									sleep(150);
+									lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/blink/slimeBlinkThree.png")));
+									sleep(150);
+									lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/blink/slimeBlinkTwo.png")));
+									sleep(150);
+									lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/blink/slimeBlinkOne.png")));
+									vPetFrame = 4;
+									} else {
+										lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleFour.png")));}
+										vPetFrame++;
+										break;
+						case 4:
+							lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleFive.png")));
+							vPetFrame++;
+							break;
+						case 5:
+							lblImagemain.setIcon(new ImageIcon(vPetGui.class.getResource("/vPetRes/images/Slime/idle/slimeIdleSix.png")));
+							vPetFrame=0;
+							break;
+						}
+					
+					lblImagemain.setBounds(vPetFrameSlide, 128, 62, 59);
+					vPetBlink = vPetRng;
+					if (vPetFrameSlideDir == 'R') {
+						if (vPetFrameSlide<31) {
+							vPetFrameSlide++;}
+						else {vPetFrameSlideDir = 'L';}
+					} else if (vPetFrameSlideDir == 'L') {
+						if (vPetFrameSlide>19) {
+							vPetFrameSlide--;}
+						 else {vPetFrameSlideDir = 'R';}
+					}
+					
+					sleep(150);
+					}
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		vPetAnim.start();
+	}
+	
 	public vPetGui() {
 		initialize();
+		vPetAnim();
 		clock();
 	}
 
 	private void initialize () {
 		frmVpet = new JFrame();
 		frmVpet.setResizable(false);
-		frmVpet.setTitle("vPet "+vPetName);
+		frmVpet.setTitle("vPet ("+ownerName+") main");
 		frmVpet.setBounds(100, 100, 500, 300);
 		frmVpet.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmVpet.getContentPane().setLayout(null);
@@ -114,16 +248,16 @@ public class vPetGui {
 		String data[][] = { 	{"Active","Name","T.O.B", "D.O.B."},
 								{vPetActive, vPetName, vPetDOBt, vPetDOBd}};
 	    String column[] =		{"Active","NAME","T.O.B", "D.O.B."}; 
-		vPetTable = new JTable(data,column);
-		vPetTable.setVisible(true); 
-		vPetTable.setFillsViewportHeight(false);
+	    JTable vPetTable = new JTable(data,column);
+		vPetTable.setVisible(true);
+		vPetTable.setFillsViewportHeight(true);
 		vPetTable.setBounds(10, 198, 474, 32);
 		frmVpet.getContentPane().add(vPetTable);
 		
 		lblStomach = new JLabel("Stomach");
 		lblStomach.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblStomach.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblStomach.setBounds(403, 11, 81, 30);
+		lblStomach.setBounds(384, 11, 100, 30);
 		frmVpet.getContentPane().add(lblStomach);
 		
 		JButton btnNewButton = new JButton("Feed");
@@ -133,8 +267,41 @@ public class vPetGui {
 				vPetStomach = vPetStomach + 10;
 			}
 		});
-		btnNewButton.setBounds(304, 17, 89, 23);
+		btnNewButton.setBounds(285, 17, 89, 23);
 		frmVpet.getContentPane().add(btnNewButton);
+		
+		lblLivedata = new JLabel("liveData");
+		lblLivedata.setBounds(20, 238, 354, 20);
+		frmVpet.getContentPane().add(lblLivedata);
+		
+		lblImagemain = new JLabel("");
+		lblImagemain.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblImagemain.setBounds(20, 128, 62, 59);
+		frmVpet.getContentPane().add(lblImagemain);
+		
+		textFieldOne = new JTextField();
+		textFieldOne.addCaretListener(new CaretListener() {
+			public void caretUpdate(CaretEvent arg0) {
+				FieldOneLive = textFieldOne.getText();
+			}
+		});
+		textFieldOne.setBounds(296, 164, 89, 23);
+		frmVpet.getContentPane().add(textFieldOne);
+		textFieldOne.setColumns(10);
+		textFieldOne.setText("Your Name");
+		
+		JButton btnSelectbuttonOne = new JButton("Select");
+		btnSelectbuttonOne.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				ownerName = textFieldOne.getText();
+				textFieldOne.setVisible(false);
+				btnSelectbuttonOne.setVisible(false);
+				frmVpet.setTitle("vPet ("+ownerName+") main");
+			}
+		});
+		btnSelectbuttonOne.setBounds(395, 164, 89, 23);
+		frmVpet.getContentPane().add(btnSelectbuttonOne);
 	}
 	
 
@@ -157,5 +324,26 @@ public class vPetGui {
 		
 		return currentCal;
 		
+	}
+	
+	public static void vPetStomachGaugeChk() {
+		if (vPetStomach > 99) {
+			vPetStomachGauge = "Over-fed";
+		} else if ((vPetStomach > 74) && (vPetStomach < 100) ) {
+				vPetStomachGauge = "Well-fed";
+			} else if ((vPetStomach > 49) && (vPetStomach < 75) ) {
+				vPetStomachGauge = "Satiated";
+			} else if ((vPetStomach > 24) && (vPetStomach < 50) ) {
+				vPetStomachGauge = "Hungry";
+			} else if ((vPetStomach > 0) && (vPetStomach < 25) ) {
+				vPetStomachGauge = "Famished";
+			} else if (vPetStomach < 1) {
+				vPetStomachGauge = "Starving!";
+			} 
+	}
+	
+	public static double rnJesus(double prayer) {
+		double judgement = Math.random() * prayer + 1;
+		return judgement;
 	}
 }
