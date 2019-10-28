@@ -1,0 +1,161 @@
+package vPetRes;
+
+import java.awt.EventQueue;
+import javax.swing.*;
+import java.util.*;
+import java.lang.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+
+public class vPetGui {
+		
+	static String vPetName;
+	static String vPetActive;
+	static String vPetDOBt;
+	static String vPetDOBd;
+	static double vPetStomach;
+
+	static long currentMillisTag;
+	
+	String nowTime;
+	
+	private JFrame frmVpet;
+	private JLabel lblClock;
+	private JTable vPetTable;
+	private JLabel lblStomach;
+
+	public static void main(String[] args) {
+		currentMillisTag = System.currentTimeMillis();
+		String[] tempDOBt = vPetCal();
+		vPetSrc teaserPet = new vPetSrc ("Steve", true, tempDOBt[1], tempDOBt[0], ""+currentMillisTag, 50);
+		vPetName = teaserPet.vName;
+		if (teaserPet.isActive) {
+			vPetActive = "Yes";
+		} else {
+			vPetActive = "No";
+			}
+		vPetDOBt = ""+teaserPet.vDOB[0];
+		vPetDOBd = ""+teaserPet.vDOB[1];
+		vPetStomach = teaserPet.vStomach;
+		
+	    
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					vPetGui window = new vPetGui();
+					window.frmVpet.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void clock() {
+		
+		Thread clock = new Thread() {
+			public void run() {
+				try {
+					
+					while(true) {
+					
+					currentMillisTag = System.currentTimeMillis();
+					
+					Calendar cal = new GregorianCalendar();
+					int day = cal.get(Calendar.DAY_OF_MONTH);
+					int month = cal.get(Calendar.MONTH);
+					int year = cal.get(Calendar.YEAR);
+
+					int second = cal.get(Calendar.SECOND);
+					int minute = cal.get(Calendar.MINUTE);
+					int hour = cal.get(Calendar.HOUR);
+					
+					lblClock.setText("("+currentMillisTag+")");
+					lblStomach.setText("H:"+Math.round(vPetStomach*100)/100.0);
+					
+					vPetStomach = vPetStomach - 0.1;
+					
+					sleep(1000);
+					
+					}
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		clock.start();
+	}
+	
+	public vPetGui() {
+		initialize();
+		clock();
+	}
+
+	private void initialize () {
+		frmVpet = new JFrame();
+		frmVpet.setResizable(false);
+		frmVpet.setTitle("vPet "+vPetName);
+		frmVpet.setBounds(100, 100, 500, 300);
+		frmVpet.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmVpet.getContentPane().setLayout(null);
+		
+		lblClock = new JLabel("Clock");
+		lblClock.setHorizontalAlignment(SwingConstants.CENTER);
+		lblClock.setBounds(384, 241, 100, 20);
+		frmVpet.getContentPane().add(lblClock);
+
+		
+		String data[][] = { 	{"Active","Name","T.O.B", "D.O.B."},
+								{vPetActive, vPetName, vPetDOBt, vPetDOBd}};
+	    String column[] =		{"Active","NAME","T.O.B", "D.O.B."}; 
+		vPetTable = new JTable(data,column);
+		vPetTable.setVisible(true); 
+		vPetTable.setFillsViewportHeight(false);
+		vPetTable.setBounds(10, 198, 474, 32);
+		frmVpet.getContentPane().add(vPetTable);
+		
+		lblStomach = new JLabel("Stomach");
+		lblStomach.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblStomach.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblStomach.setBounds(403, 11, 81, 30);
+		frmVpet.getContentPane().add(lblStomach);
+		
+		JButton btnNewButton = new JButton("Feed");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				vPetStomach = vPetStomach + 10;
+			}
+		});
+		btnNewButton.setBounds(304, 17, 89, 23);
+		frmVpet.getContentPane().add(btnNewButton);
+	}
+	
+
+	
+	public static String[] vPetCal() {
+
+		String[] currentCal = {"0", "0"};
+		
+		Calendar vPetCal = new GregorianCalendar();
+		int day = vPetCal.get(Calendar.DAY_OF_MONTH);
+		int month = vPetCal.get(Calendar.MONTH);
+		int year = vPetCal.get(Calendar.YEAR);
+
+		int second = vPetCal.get(Calendar.SECOND);
+		int minute = vPetCal.get(Calendar.MINUTE);
+		int hour = vPetCal.get(Calendar.HOUR);
+		
+		currentCal[0] = ""+day+":"+month+":"+year;
+		currentCal[1] = ""+hour+":"+minute+":"+second;
+		
+		return currentCal;
+		
+	}
+}
