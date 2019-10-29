@@ -30,61 +30,40 @@ public class vPetSrc {
 		
 		
 	}
+	
     public static void saveState(char args) {
     	
     	if (args=='C') {
-    		try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = 
-                new FileReader(saveFile);
+    	        try {
 
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = 
-                new BufferedReader(fileReader);
+    	            File fileOne = new File(saveFile);
+    	            
+    	            Scanner input = new Scanner(fileOne);
 
-            while((saveFileLine = bufferedReader.readLine()) != null) {
-            	//System.out.println(saveFileLine);
-            	saveDataIn.add(saveFileLine);
-            	
-            }   
 
-            // Always close files.
-            bufferedReader.close();         
-        }
-        catch(FileNotFoundException ex) {
-            System.out.println(
-                "Unable to open file '" + 
-                		saveFile + "'");                
-        }
-        catch(IOException ex) {
-            System.out.println(
-                "Error reading file '" 
-                + saveFile + "'");                  
-            // Or we could just do this: 
-            // ex.printStackTrace();
-        }
-    		
-    	}
-    	
-    	if (saveDataIn.size()==0) {System.out.println(" no Data in Save");}
-    	
-    }
-    
+    	            while (input.hasNextLine()) {
+    	                saveFileLine = input.nextLine();
+    	                saveDataIn.add(saveFileLine);
+    	            }
+    	            input.close();
+
+    	        } catch (Exception ex) {
+    	            ex.printStackTrace();
+    	        }
+    	    }
+    	}    
 
     public static void writeState(String args) {
     	try {
     		
-    		FileWriter fileWriter = new FileWriter(saveFile);
+    		FileWriter fileWriter = new FileWriter(saveFile,true);
 
-    		// Always wrap FileWriter in BufferedWriter.
-    		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+    		BufferedWriter saveWriter = new BufferedWriter(fileWriter);
 
-    		
-    		bufferedWriter.write(args+"\n");
-    		bufferedWriter.newLine();
-
-    		// Always close files.
-    		bufferedWriter.close();
+    		saveWriter.write(args);
+    		saveWriter.newLine();
+    		saveWriter.flush();
+    		saveWriter.close();
     	}
     	catch(IOException ex) {
     		System.out.println("Error writing to file '"+saveFile+"'");
