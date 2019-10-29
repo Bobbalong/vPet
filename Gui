@@ -1,6 +1,7 @@
 
 package vPetRes;
 
+import vPetRes.vPetSrc;
 import javax.swing.*;
 import java.util.*;
 import java.lang.*;
@@ -71,27 +72,31 @@ public class vPetGui {
 		} else {
 			vPetActive = "No";
 		}
-		vPetValue.add(""+vPetActive);
+		vPetSrc.writeState("vPetActive "+vPetActive);
+		vPetValue.add(" "+vPetActive);
 		
 		
 		vPetName = teaserPet.vName;
-		vPetValue.add(""+vPetName);
+		vPetSrc.writeState("vPetName "+vPetName);
+		vPetValue.add(" "+vPetName);
 		
 		vPetMillisBorn = teaserPet.millisBorn;
-		vPetValue.add(""+vPetMillisBorn);
+		vPetSrc.writeState("vPetMillisBorn "+vPetMillisBorn);
+		vPetValue.add(" "+vPetMillisBorn);
 		
 		vPetDOBt = teaserPet.vDOB[0];
+		vPetSrc.writeState("vPetDOBt "+vPetDOBt);
 		vPetValue.add(""+vPetDOBt);
 		
 		vPetDOBd = teaserPet.vDOB[1];
+		vPetSrc.writeState("vPetDOBd "+vPetDOBd);
 		vPetValue.add(""+vPetDOBd);
 		
 		vPetStomach = teaserPet.vStomach;
+		vPetSrc.writeState("vPetStomach "+vPetStomach);
 		vPetValue.add(""+vPetStomach);
 		
 		stomachHungerRate = 0.1;
-
-		vPetSrc.save();
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -106,6 +111,7 @@ public class vPetGui {
 		vPetSrc.saveState('C');
 		System.out.println(vPetValue.size()+" "+vPetSrc.saveDataIn.size());
 		System.out.println("Main/end");
+		for (int i = 0 ; i < +vPetSrc.saveDataIn.size(); i++) {System.out.println(vPetSrc.saveDataIn.get(i));}
 	}
 	
 	public void clock() {
@@ -129,7 +135,7 @@ public class vPetGui {
 					int hour = cal.get(Calendar.HOUR);
 					
 					lblClock.setText("("+currentMillisTag+")");
-					lblLivedata.setText(""+Math.round(vPetStomach * 100.0) / 100.0+" | "+vPetRng+" | "+vPetMillisAlive+" | "+FieldOneLive+" | "+saveStateRes+" | "+writeStateRes);
+					lblLivedata.setText(""+Math.round(vPetStomach * 100.0) / 100.0+" | "+vPetRng+" | "+vPetMillisAlive+" | "+FieldOneLive);
 					lblStomach.setText("H:"+vPetStomachGauge);
 					
 					vPetStomach = vPetStomach - stomachHungerRate;
