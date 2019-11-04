@@ -15,7 +15,7 @@ The environment will be a way user to affect the pet. Stats generated in by the 
 ## vPetGui
 
 ###### vPetGui()
-Used to call clock(), vPetAnim() and initialize().
+- Used to call clock(), vPetAnim() and initialize().
     
 ###### main()
 initilizes vPetGui
@@ -81,7 +81,6 @@ Used to pass time to milestone.
 ## Tools
   
 ## Animation
-
 hasBread()
 idle()
 blink()
