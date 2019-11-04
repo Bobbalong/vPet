@@ -3,7 +3,7 @@
 
 
 
-## Class, constructor and method descriptions.
+# Class, constructor and method descriptions.
 
 ## vPetGui
 
