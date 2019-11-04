@@ -8,11 +8,11 @@
 ###### vPetGui
 
   vPetGui()
-    Used to call clock(), vPetAnim() and initialize().
+    -Used to call clock(), vPetAnim() and initialize().
     
   main()
-    initilizes vPetGui
-    (?)initializes saveStates (needs moved).
+    -initilizes vPetGui
+    -(?)initializes saveStates (needs moved).
       
   clock()
     Initialise clock thread - used to regulate some checks to a regular time (ms) interval.
