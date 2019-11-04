@@ -7,75 +7,75 @@
 
 ###### vPetGui
 
-vPetGui()
+###### vPetGui
 	Used to call clock(), vPetAnim() and initialize().
     
-main()
+###### main()
 	initilizes vPetGui
 	(?)initializes saveStates (needs moved).
       
-clock()
+###### clock()
 	Initialise clock thread - used to regulate some checks to a regular time (ms) interval.
     
-vPetAnim()
+###### vPetAnim()
 	Initializes vPetAnim thread - used to cycle GUI images at a given 'framerate'.
     
-initialize()
+###### initialize()
 	Build GUI.
         
 ###### vPetSrc
 
-vPetSrc()
+###### vPetSrc()
 	Initializes a pet dependant on given parameters.
       
 ###### saving
 
-prep()
+###### prep()
 	Adds to array current states to be saved.
     
-writeState()
+###### writeState()
 	append given parameter to save.txt.
     
-save()
+###### save()
 	Cycles through saveStates array and uses writeState() with the corresponding value.
     
-readSave()
+###### readSave()
 	Takes 'C' or 'L' parameter.
 	'C' is used to read save.txt and add each line to an array.
 	'L' is used to distrobute array from 'C' to the corresponding variables.
     
 ###### vPetEvents
 
-creation()
+###### creation()
 	Takes 'E' or 'C' parameter.
 	'E' is used to add to an array user values related to pet generation.
 	'C' is used to create a pet by passing array values to vPetSrc().
     
-hungerTick()
+###### hungerTick()
 	A calculator used for adjusting variables related to pet stomach dependant on current situation.
     
-clean()
+###### clean()
 	Decreases variables related to hygiene dependant on current situation.
     
-dirtTick()
+###### dirtTick()
 	A calculator used for adjusting variables related to pet hygiene dependant on current situation.
   
-intro() *Jank*
+###### intro() *Jank*
 	Check current setup and progresses as needed.
 	**Currently called in clock thread.**
     
-milestone() *Jank* *trial/temp*
+###### milestone() *Jank* *trial/temp*
 	A calculator used for adjusting variables related to event dependant on current time.
     
-eventCalc() *Jank*
+###### eventCalc() *Jank*
 	Used to pass time to milestone.
     
 
 ###### Tools
   
 ###### Animation
-  
-hasBread()
+
+	hasBread()
 	idle()
 	blink()
 	stink()
