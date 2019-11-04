@@ -5,9 +5,9 @@
 
 ## Class, constructor and method descriptions.
 
-###### vPetGui
+## vPetGui
 
-###### vPetGui
+###### vPetGui()
 	Used to call clock(), vPetAnim() and initialize().
     
 ###### main()
@@ -23,12 +23,12 @@
 ###### initialize()
 	Build GUI.
         
-###### vPetSrc
+## vPetSrc
 
 ###### vPetSrc()
 	Initializes a pet dependant on given parameters.
       
-###### saving
+## saving
 
 ###### prep()
 	Adds to array current states to be saved.
@@ -44,7 +44,7 @@
 	'C' is used to read save.txt and add each line to an array.
 	'L' is used to distrobute array from 'C' to the corresponding variables.
     
-###### vPetEvents
+## vPetEvents
 
 ###### creation()
 	Takes 'E' or 'C' parameter.
@@ -71,9 +71,9 @@
 	Used to pass time to milestone.
     
 
-###### Tools
+## Tools
   
-###### Animation
+## Animation
 
 	hasBread()
 	idle()
