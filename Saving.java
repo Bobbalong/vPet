@@ -1,5 +1,4 @@
-package vPetRes;
-
+package vPetSrc;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class saving {
+public class Saving {
+	
+	static String[] states = {"Active", "Pet Name", "PetMillisBorn", "DOB time", "DOB", "Stomach", "Stomach Mod", "Owner Name", "Bread", "Bread Tick", "Stomach Load", "Stomach Capacity", "Bowel", "Hygiene", "eventLog"};
+
+	static ArrayList<String> vPetValue = new ArrayList<String>();
 	
 	static String saveFile = "resource/save.txt";
 	static String saveFileLine = null;
@@ -18,10 +21,14 @@ public class saving {
 
 			System.out.println("Saving...");
     		prep();
-    		for (int i = 0; i<vPetGui.vPetSaveStates.length ; i++) {
-    			writeState(vPetGui.vPetValue.get(i));
+    		for (int i = 0; i<states.length ; i++) {
+    			writeState(vPetValue.get(i));
+    		}
+    		for (int i = 0; i<states.length ; i++) {
+    			System.out.println(states[i]+" - "+vPetValue.get(i));
     		}
     		System.out.println("Saved");
+    		
     }
 	
     public static void readSave(char args) {
@@ -52,35 +59,28 @@ public class saving {
     	
     	if (args=='L') {
     		
-    		vPetGui.vPetActive = Boolean.parseBoolean(saveDataIn.get(0));
-    		vPetGui.vPetName = saveDataIn.get(1);
+    		vPet.isActive = Boolean.parseBoolean(saveDataIn.get(0));
+    		vPet.name = saveDataIn.get(1);
     		long t1 = Long.parseLong(saveDataIn.get(2));
-    		vPetGui.vPetMillisBorn = t1;
-    		vPetGui.vPetDOBt = saveDataIn.get(3);
-    		vPetGui.vPetDOBd = saveDataIn.get(4);
+    		vPet.millisBorn = t1;
+    		vPet.DOB[0] = saveDataIn.get(3);
+    		vPet.DOB[1] = saveDataIn.get(4);
     		double t2 = Double.valueOf(saveDataIn.get(5));
-    		vPetGui.vPetStomach = t2;
+    		vPet.stomach = t2;
     		double t3 = Double.valueOf(saveDataIn.get(6));
-    		vPetGui.vPetStomachMod = t3;
-    		vPetGui.ownerName = saveDataIn.get(7);
+    		vPet.stomachMod = t3;
+    		vPet.owner = saveDataIn.get(7);
     		int t4 = Integer.parseInt(saveDataIn.get(8));
-    		Tools.loaves = t4;
+    		Menu.bread = t4;
     		double t5 = Double.valueOf(saveDataIn.get(9));
-    		Tools.breadTick = t5;
+    		Menu.breadTick = t5;
     		int t6 = Integer.parseInt(saveDataIn.get(10));
-    		Tools.breadLimit = t6;
+    		vPet.stomachLoad = t6;
     		int t7 = Integer.parseInt(saveDataIn.get(11));
-			vPetGui.vPetPoop = t7;
+			vPet.stomachBowel = t7;
 			eventLog = saveDataIn.get(12);
 			
             System.out.println("Loaded");
-            
-			//vPetGui.frmVpet.setTitle("vPet ("+vPetGui.ownerName+") main");
-			//vPetGui.lblPetName.setText(vPetGui.vPetName);
-			//vPetGui.frmVpet.getContentPane().add(vPetGui.lblImagemain);
-			//vPetGui.lblDob.setText("D.O.B. "+vPetGui.vPetDOBd);
-			
-			Tools.uiInit();
 	    }
     }
 
@@ -101,24 +101,29 @@ public class saving {
     	}
     }
     
-    public static void prep () {
+    public static void prep() {
     	
-		vPetGui.vPetValue.set(0, ""+vPetGui.vPetActive);
-		vPetGui.vPetValue.set(1, ""+vPetGui.vPetName);
-		vPetGui.vPetValue.set(2, ""+vPetGui.vPetMillisBorn);
-		vPetGui.vPetValue.set(3, ""+vPetGui.vPetDOBt);
-		vPetGui.vPetValue.set(4, ""+vPetGui.vPetDOBd);
-		vPetGui.vPetValue.set(5, ""+vPetGui.vPetStomach);
-		vPetGui.vPetValue.set(6, ""+vPetGui.vPetStomachMod); 
-		vPetGui.vPetValue.set(7, ""+vPetGui.ownerName);    	
-		vPetGui.vPetValue.set(8, ""+Tools.loaves);    
-		vPetGui.vPetValue.set(9, ""+Tools.breadTick);  
-		vPetGui.vPetValue.set(10, ""+Tools.breadLimit);  
-		vPetGui.vPetValue.set(11, ""+vPetGui.vPetPoop);    
-		vPetGui.vPetValue.set(12, ""+eventLog);    		
+		for(int i=0;i<states.length;i++) {vPetValue.add("zero");};
     	
-		for (int i = 0 ; i<vPetGui.vPetSaveStates.length ; i++) {
-			System.out.println(vPetGui.vPetValue.get(i));
+		vPetValue.set(0, ""+vPet.isActive);
+		vPetValue.set(1, ""+vPet.name);
+		vPetValue.set(2, ""+vPet.millisBorn);
+		vPetValue.set(3, ""+vPet.DOB[0]);
+		vPetValue.set(4, ""+vPet.DOB[1]);
+		vPetValue.set(5, ""+vPet.stomach);
+		vPetValue.set(6, ""+vPet.stomachMod); 
+		vPetValue.set(7, ""+vPet.owner);    	
+		vPetValue.set(8, ""+Menu.bread);    
+		vPetValue.set(9, ""+Menu.breadTick);  
+		vPetValue.set(10, ""+vPet.stomachLoad);
+		vPetValue.set(11, ""+vPet.stomachCap);
+		vPetValue.set(12, ""+vPet.stomachBowel);
+		vPetValue.set(13, ""+vPet.hygiene);    
+		
+		vPetValue.set(14, ""+eventLog);    		
+    	
+		for (int i = 0 ; i<states.length ; i++) {
+			System.out.println(vPetValue.get(i));
 		}
 		
     	try {    		
