@@ -1,6 +1,7 @@
 package vPetSrc;
 
 public class Interaction {
+	public static boolean cleaning = false;
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static void feed(String food) {													//feed() This method is used when the pet is given food
 		
@@ -16,7 +17,7 @@ public class Interaction {
 						&& Menu.bread < 11 
 						&& Menu.bread >0 ) {												//Checks bread stock and stomach cooldown
 					
-					vPet.stomach += (10 * vPet.stomachMod);									//Stomach contents increase
+					vPet.stomach += Menu.breadValue;									//Stomach contents increase
 					vPet.stomach = Math.max(0, Math.min(100, vPet.stomach));				//Constrains stomach (0-100)
 					Menu.bread--;															//Bread Stock decreases
 					vPet.stomachLoad++;														//Stomach cooldown increase
@@ -29,8 +30,9 @@ public class Interaction {
 				else if (Menu.bread == 0) {													//Check Loaf stock
 					Tools.messages("noBread");
 					}
+				GUI.lblBreadCount.setText(Menu.bread+" X ");
+				
 					break;
-					
 				case "Cake":																//Bread
 			
 					break;
@@ -39,11 +41,18 @@ public class Interaction {
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static void clean() {															//Clean() used to remove unhygienic things from environment or pet
 		
-		if (vPet.poos>0) {																	//Check for Poo
-			vPet.poos--;																	//Poo stack decreases
-			Tools.messages("cleanPoo");														//msg	
+		if (vPet.hygiene<100) {																//Check for Poo
+			vPet.hygiene = 100;																	//Poo stack decreases
+			Tools.messages("cleanPet");														//msg
+			cleaning = true;
 			}
-		
-		System.out.println(vPet.poos);
 	}
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------
+		public static void scoop() {															//Clean() used to remove unhygienic things from environment or pet
+			
+			if (vPet.poos>0) {																	//Check for Poo
+				vPet.poos--;																	//Poo stack decreases
+				Tools.messages("cleanPoo");														//msg
+				}
+		}
 }
