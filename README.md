@@ -8,3 +8,11 @@ for the creation of virtual pet will be gathered from the user and modulated by 
 states of a pet will be moddified by the conditions set by the enviroment. Pet or user actions will futher affect the pet stats.
 
 The environment will be a way user to affect the pet. Stats generated in by the environment will affect the pet stats and cause adjustment.
+
+## Currently implemented
+
+#### Stomach
+
+#### Hygiene
+
+#### Energy
