@@ -1,5 +1,7 @@
 package vPetSrc;
 
+import javax.swing.ImageIcon;
+
 public class Interaction {
 	public static boolean cleaning = false;
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -7,31 +9,16 @@ public class Interaction {
 		
 			switch (food) {																	//Food Choice
 			
-			case "Bread":																	//Bread
-				
-				if (vPet.stomachLoad == vPet.stomachCap) {									//Check if stomach available 
-					Tools.messages("stomachCap");											//msg
-					}
-				else if (vPet.stomachLoad < vPet.stomachCap 
-						&& vPet.stomach < 99 
-						&& Menu.bread < 11 
-						&& Menu.bread >0 ) {												//Checks bread stock and stomach cooldown
-					
-					vPet.stomach += Menu.breadValue;									//Stomach contents increase
-					vPet.stomach = Math.max(0, Math.min(100, vPet.stomach));				//Constrains stomach (0-100)
+			case "Bread":																	//Bread				
+				if (Home.bowl[2]<1 && Menu.bread > 0) {					
+					GUI.lblBowl.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bowl/bowlFull.png")));				
 					Menu.bread--;															//Bread Stock decreases
-					vPet.stomachLoad++;														//Stomach cooldown increase
-					Tools.messages("breadEaten");											//Msg
-					} 
-				else if (vPet.stomachLoad < vPet.stomachCap 
-						&& vPet.stomach > 99) {												//Check if stocmach full
-					Tools.messages("bloated");												//Msg
-					} 
-				else if (Menu.bread == 0) {													//Check Loaf stock
+					Home.bowl[2] += 3;
+					GUI.lblBreadCount.setText(Menu.bread+" X ");
+				} 
+				else {
 					Tools.messages("noBread");
-					}
-				GUI.lblBreadCount.setText(Menu.bread+" X ");
-				
+					}				
 					break;
 				case "Cake":																//Bread
 			
@@ -39,20 +26,21 @@ public class Interaction {
 				}																				
 	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void clean() {															//Clean() used to remove unhygienic things from environment or pet
+	public static void clean() {															//Clean() used to remove unhygienic things from pet
 		
-		if (vPet.hygiene<100) {																//Check for Poo
-			vPet.hygiene = 100;																	//Poo stack decreases
-			Tools.messages("cleanPet");														//msg
-			cleaning = true;
+		if (vPet.hygiene<100) {																//Check if pet is dirty
+			Tools.messages("petCleaned");													//msgs
+			vPet.hygiene = 100;																//Cleans pet
+			cleaning = true;																//Queue cleaning animation
 			}
 	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-		public static void scoop() {															//Clean() used to remove unhygienic things from environment or pet
+		public static void scoop() {														//scoop() used to remove unhygienic things from environment
 			
-			if (vPet.poos>0) {																	//Check for Poo
-				vPet.poos--;																	//Poo stack decreases
-				Tools.messages("cleanPoo");														//msg
+			if (vPet.poos>0) {																//Check for Poo
+				vPet.poos--;																//Poo stack decreases
+				Tools.messages("cleanPoo");													//msg
 				}
 		}
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
