@@ -37,11 +37,11 @@ public class vPet {
 		DOB[1] = DOBd;						
 		millisBorn = millis;				
 		stomach = Tools.rnJesus(80)+10;	
-		stomachTol = Tools.rnJesus(50)+10;;
+		stomachTol = Tools.rnJesus(10)+89;
 		stomachMax = 100;
 		stomachMod = 1;
 		stomachLoad = 0;
-		stomachCap = 3;
+		stomachCap = 6;
 		hygiene = Tools.rnJesus(50)+49;
 		hygieneTol = Tools.rnJesus(10)+89;
 		
@@ -55,6 +55,8 @@ public class vPet {
 		energy = Tools.rnJesus(10)+40;
 		energyTol = Tools.rnJesus(10)+89;
 		energyMod = 1;
+		
+		Menu.bread = 10;
 
 	}
 	
@@ -63,24 +65,24 @@ public class vPet {
 	
 		if(args == 'E') {
 			selections.add(selection);
-			for (int i=0;i<selections.size();i++) {System.out.println(selections.get(i));};
-			System.out.println(selections.size());
+			//for (int i=0;i<selections.size();i++) {System.out.println(selections.get(i));};
+			//System.out.println(selections.size());
 		}
 	
 		else if (args == 'C') {
 			
-		    System.out.print("creation ");	
+		    System.out.println("creation ");	
 			
 			Tools.vPetTime();
 			
 			vPet virtualPet = new vPet (selections.get(0),selections.get(2), true, Tools.currentCalendar[0], Tools.currentCalendar[1], Tools.currentMillisTag, selections.get(1));
 			
-			petSim.cycle();
-
 			Tools.labeler(vPet.owner+" spawned "+vPet.name+" on "+vPet.DOB[1]+" at "+vPet.DOB[0]+".");
 			Tools.labeler("It was a "+petSim.stomachGaugeChk()+" and "+petSim.hygieneGaugeChk()+" "+vPet.species+".");
-			Tools.log(vPet.owner+" spawned "+vPet.name+" on "+vPet.DOB[1]+" at "+vPet.DOB[0]+". It was a "+petSim.stomachGaugeChk()+" and "+petSim.hygieneGaugeChk()+" "+vPet.species+".");
+			Logger.log(vPet.owner+" spawned "+vPet.name+" on "+vPet.DOB[1]+" at "+vPet.DOB[0]+". It was a "+petSim.stomachGaugeChk()+" and "+petSim.hygieneGaugeChk()+" "+vPet.species+".");
 		
+			petSim.cycle();
+			imgCycle.vPetAnim();
 		} 
 	}
 }
