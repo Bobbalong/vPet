@@ -1,75 +1,97 @@
 package vPetSrc;
 
-import java.util.*;
-
 import javax.swing.ImageIcon;
 
 public class intro {
-	
-	Scanner introScn;
-
-	public static boolean intro = false;
 	public static String userName, petName, petType;
+	public static int introStep = 0;
 	
 	public static void introQuiz() {
+
+		System.out.println("intro Q top");
 		
-		while (!vPet.isActive) {			
-			
-			loadCapture();
-			
-			petSim.cycle();
-			
-			intro = true;
-			
+		while (introStep < 6) {				
+			if (introStep==0 | introStep==2 | introStep==4) {
+				introStepper();
+				System.out.println("intro Q loop "+introStep);
 			}
+			
+		}		
+		System.out.println("intro Q Bottom");
 		}
 	
-	public static void loadCapture() {
+	public static void introStepper() {
+
+		System.out.println("introStepper "+introStep);
 		
-		Scanner introScn = new Scanner(System.in);
-    
-		Tools.labeler("Enter 'load' or a new username.");
-		System.out.println("Enter 'load' or a new username."); 
+		switch (introStep) {
 		
-		userName = introScn.nextLine();	 
-	    
-	    loadCheck();
-	    
-		//introScn.close();
+		case 0:
+			Tools.labeler("Enter 'load' or a new username.");
+			introStep++;
+			break;
+				
+		case 1:
+			userName = GUI.userInput;
+			GUI.userInputNew = false;
+			loadCheck();
+			break;
+			
+		case 2:
+		    Tools.labeler("Choose pet type. \"snek\" or \"slime\"");
+		    introStep++;
+			break;
+			
+			
+		case 3:
+			specCheck();
+			GUI.userInputNew = false;
+			break;
+			
+		case 4:
+			Tools.labeler("Enter pet name");
+		    introStep++;
+			break;
+			
+			
+		case 5:
+			petName = GUI.userInput;
+			GUI.userInputNew = false;					
+			Tools.labeler("Pet name is: " + petName);
+		    vPet.creation('E', petName);
+			introStep++;
+		    introStepper();
+			break;
+			
+		case 6:		
+			GUI.userInputNew = false;
+		    introStep++;
+			vPet.creation('C', "");
+			break;
+		}
+		
 	}
 	
 	public static void loadCheck() {
 		
 		if (userName.equalsIgnoreCase("load")) {
-		    System.out.println("Loading...");
+			introStep = 6;
+			Tools.labeler("Loading...");
 			Saving.readSave('C');
 			Saving.readSave('L');
-			intro = true;
 		}
 		else {
 			Tools.labeler("Username is: " + userName);
 			System.out.println("Username is: " + userName);
 		    vPet.creation('E', userName);
-		    specCapture();
+		    introStep++;
+		    introStepper();
 		}
-	}	
-	
-	public static void specCapture() {
-		Scanner introScn = new Scanner(System.in);
-
-	    Tools.labeler("Choose pet type. \"snek\" or \"slime\"");
-	    System.out.println("Choose pet type. \"snek\" or \"slime\"");
-	    
-	    petType = introScn.nextLine();
-	    
-	    specCheck();
-
-		eggSet();		
-
-		//introScn.close();
 	}
 	
 	public static void specCheck() {
+		
+		petType = GUI.userInput;
 		
 		boolean safe = false;
 		
@@ -80,13 +102,14 @@ public class intro {
 		}
 		if (!safe) {	  
 		    Tools.labeler("Unknown Type: " + petType);
-		    System.out.println("Unknown Type: " + petType);
-	    	specCapture();	
+		    Tools.labeler("Please try \"nek\" or \"slime\"");
 		}
 		else if (safe) {
 		    vPet.creation('E', petType);
 			Tools.labeler("Pet type chosen: " + petType);
-			System.out.println("Pet type chosen: " + petType);
+			eggSet();
+		    introStep++;
+		    introStepper();
 		}
 	}
 	
@@ -94,28 +117,9 @@ public class intro {
 		
 		if (petType.equalsIgnoreCase(vPet.speciesList[1])) {
 			GUI.lblImageMain.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Slime/slimeEgg.png")));
-			nameCapture();
 		}
 		else if (petType.equalsIgnoreCase(vPet.speciesList[0])) {
 			GUI.lblImageMain.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Snek/snekEgg.png")));
-			nameCapture();
 		}
-	}
-
-	public static void nameCapture() {
-		Scanner introScn = new Scanner(System.in);
-		
-		Tools.labeler("Enter pet name");
-		System.out.println("Enter pet name");
-		
-		petName = introScn.nextLine();
-		vPet.creation('E', petName);
-		
-		Tools.labeler("Pet name is: " + petName);
-		System.out.println("Pet name is: " + petName);
-		
-		vPet.creation('C', "");
-				
-		introScn.close();
 	}
 }
