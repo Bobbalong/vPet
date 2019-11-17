@@ -88,9 +88,11 @@ public class Saving {
     		vPet.energy = Double.valueOf(saveDataIn.get(			19));
     		vPet.energyTol = Double.valueOf(saveDataIn.get(			20));
     		vPet.energyMod = Double.valueOf(saveDataIn.get(			21));
-    		
-    		petSim.cycle();
 			
+			petSim.cycle();
+			imgCycle.vPetAnim();
+			
+			Tools.labeler("Loaded");
             System.out.println("Loaded");
 	    }
     }
