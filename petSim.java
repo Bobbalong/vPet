@@ -1,22 +1,23 @@
 package vPetSrc;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 import javax.swing.ImageIcon;
 
 public class petSim {
 	
-	public static int cycleTick;
+	public static int cycleTick , eatTick;
 	public static double dirtDmg;
 	public static boolean intro = false;
-	public static boolean needsSleep = false, asleep, needsToilet = false;
+	public static boolean needsSleep = false, asleep, needsToilet = false, needsFood = false, bowlNeedsFilled = false;
+	public static boolean eating;
 	
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------clock
 	public static void cycle() {
 		
 		System.out.println("sim top");
-		
+
+		Menu.breadCheck();
 		stomachCD();
 
 			Thread cycle = new Thread() {				//This thread is used to cycle the pet checks (250ms)
@@ -24,13 +25,20 @@ public class petSim {
 				try {
 					
 					while(true) {
+						
+
+						//System.out.println("sim top");
 
 						cycleTick++;						
 						vPet.millisAlive = System.currentTimeMillis() - vPet.millisAlive;
 						
 						stomachGaugeChk();
 						hygieneGaugeChk();
+						
 						bowelVoid();
+
+						eatChk();
+						bowlChk();
 						
 						if(cycleTick == 40 | cycleTick == 80 | cycleTick == 120) {
 							fatigueTick();
@@ -49,7 +57,7 @@ public class petSim {
 						}
 
 						
-						sleep(250);																//The Interval, 250ms					
+						sleep(250);													//The Interval, 250ms					
 					}
 					
 				} catch (InterruptedException e) {
@@ -65,27 +73,25 @@ public class petSim {
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static void hungerTick() {												//hungerTick() This method is used to perform calculations on and reevaluate the vPet stomach
 		
-		DecimalFormat df = new DecimalFormat("###.###");
-		
 		double i;
 		
 		if (vPet.stomach==0) {														//Checks for empty energy
-			vPet.stomachMod *= 1.1;												//Adjusts stomach mod' if stomach found empty
+			vPet.stomachMod *= 1.1;													//Adjusts stomach mod' if stomach found empty
 			System.out.println("Stomach Empty "+vPet.stomachMod);					//Msg
-			Tools.log("Starved "+Math.round((vPet.stomachMod) * 100.0) / 100.0);} 	//Log
+			Logger.log("Starved "+Math.round((vPet.stomachMod) * 100.0) / 100.0);} 	//Log
 		
 		else if (vPet.stomach>97) {													//Checks for full energy
-			vPet.stomachMod /= 1.1;												//Adjusts stomach mod' if stomach found full
+			vPet.stomachMod /= 1.1;													//Adjusts stomach mod' if stomach found full
 			System.out.println("Stomach Full "+vPet.stomachMod);					//Msg
-			Tools.log("Stuffed "+Math.round((vPet.stomachMod) * 100.0) / 100.0);} 	//Log
+			Logger.log("Stuffed "+Math.round((vPet.stomachMod) * 100.0) / 100.0);} 	//Log
 		
 		if (vPet.stomachMod>=1) {
 			i = (vPet.stomachMod-0.9) + .5;
-			vPet.stomach -= (i);										//Hunger tick, stomach energy decreases		
+			vPet.stomach -= (i);													//Hunger tick, stomach energy decreases		
 		} 
 		else if (vPet.stomachMod<1) {
 			i = (1-vPet.stomachMod) + 1;			
-			vPet.stomach -= (i);										//Hunger tick, stomach energy decreases	
+			vPet.stomach -= (i);													//Hunger tick, stomach energy decreases	
 		}
 		Menu.breadTick += vPet.stomachMod;											//Bread cooldown increments
 		
@@ -109,6 +115,10 @@ public class petSim {
 			
 			Tools.messages("bowelMove");
 			}
+		
+		if (vPet.stomachBowel>49) {
+			needsToilet = true;
+		}
 	}
 	
 	public static void bowelVoid() {
@@ -197,7 +207,7 @@ public class petSim {
 			}
 		//System.out.println(" Done ("+stomachStates.length+"/"+iRank.size()+")");
 		}
-		GUI.lblStomach.setText("Stomach: "+ vPet.stomachGauge);
+		GUI.lblStomach.setText("Stomach: "+ vPet.stomachGauge);		
 		return vPet.stomachGauge;
 	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -254,24 +264,19 @@ public class petSim {
 		if (vPet.energy>=0) {
 			if (vPet.energy >= vPet.energyTol) {
 				vPet.energy -= vPet.energyMod;
-				System.out.println("t1");
 			}
 			else if (vPet.energy <= (vPet.energyTol/2)) {
 				if (Tools.rnJesus(100)>vPet.energyTol) {
 					vPet.energy -= vPet.energyMod + (vPet.energyTol/100);
-					System.out.println("t3");	
 				} else {
 					vPet.energy -= vPet.energyMod + (vPet.energyTol/50);
-					System.out.println("t4");
 				}
 			}
 			else if (vPet.energy > (vPet.energyTol/2) && vPet.energy < vPet.energyTol) {
 				if (Tools.rnJesus(100)>vPet.energyTol) {
 					vPet.energy -= vPet.energyMod + (vPet.energyTol/100);
-					System.out.println("t2");
 				} else {
 					vPet.energy -= (vPet.energyMod / 2);
-					System.out.println("t0");
 					}
 			}
 		}
@@ -295,9 +300,64 @@ public class petSim {
 		}
 	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+	public static void eatChk() {
+		if (vPet.stomach < (vPet.stomachTol/4) && Home.bowl[2] == 3 && !eating) {
+			needsFood = true;
+		} 
+		else if (vPet.stomach < (vPet.stomachTol/4) && Home.bowl[2] < 1 && eating) {
+			vPet.stomachLoad++;														//Stomach cooldown increase
+			eating = false;
+		} 
+		else if (vPet.stomach > (vPet.stomachTol/4) && Home.bowl[2] < 1) {
+			eating = false;
+		}
+		else if (Home.bowl[2] == 3 && !eating) {
+			if (vPet.stomach < vPet.stomachTol && Tools.rnJesus(100) > vPet.stomachTol)
+			needsFood = true;
+		}
+		
+	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+	public static void eat() {
+		
+		eatTick++;
+		
+		System.out.println("Eating");
+			if (vPet.stomachLoad < vPet.stomachCap
+				&& vPet.stomach < 99 
+				&& Home.bowl[2]>0) {												//Checks bread stock and stomach cooldown
 
+			if (eatTick>2)  {
+				vPet.stomachLoad++;
+				eatTick=0;
+				Tools.messages("breadEaten");										//Msg
+				}																	//Stomach cooldown increase
+			vPet.stomach += (Menu.breadValue*0.333);								//Stomach value increase
+			vPet.stomach = Math.max(0, Math.min(100, vPet.stomach));				//Constrains stomach (0-100)
+			Home.bowl[2] -= 1;
+		} 
+		else if (vPet.stomachLoad < vPet.stomachCap 
+				&& vPet.stomach > 97) {												//Check if stomach full
+			Tools.messages("bloated");												//Msg
+		}
+			//bowlChk();
+			eatChk();
+	}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+	public static void bowlChk() {
+		if (Home.bowl[2] < 1 && vPet.stomach < (vPet.stomachTol*0.75)) {
+			bowlNeedsFilled = true;
+		} else {
+			bowlNeedsFilled = false;
+		}		
+		if (Home.bowl[2]==2) {
+			GUI.lblBowl.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bowl/bowlHalf.png")));	
+		}
+		else if (Home.bowl[2]==1) {
+			GUI.lblBowl.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bowl/bowlHalf.png")));
+		}
+		else if (Home.bowl[2]<1) {
+			GUI.lblBowl.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bowl/bowlEmpty.png")));
+		}
+	}
 }
