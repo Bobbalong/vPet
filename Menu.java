@@ -2,7 +2,7 @@ package vPetSrc;
 
 public class Menu {
 	
-	public static int bread = 10;
+	public static int bread;
 	public static double breadTick;
 	public static double breadValue = 10 * vPet.stomachMod;
     
@@ -16,7 +16,7 @@ public class Menu {
 			}
 		if (bread<10 && breadTick >= breadValue) {			
 			bread++;
-			breadTick -= breadValue;
+			breadTick -= (breadValue) * 1.2;
 			Tools.messages("breadCD");
 			}
 		else {
