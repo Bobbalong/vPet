@@ -2,20 +2,18 @@ package vPetSrc;
 
 import java.awt.EventQueue;
 import javax.swing.*;
-import java.util.*;
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Color;
-import javax.swing.event.CaretListener;
-import javax.swing.event.CaretEvent;
-import javax.swing.border.LineBorder;
 import java.awt.Font;
+import javax.swing.JFrame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JFrame;
 
 public class GUI {
+	
+	public static String userInput = "new";
+	public static boolean userInputNew = false;
 	
 	public static int frame;
 	public static int lblIconMidFrame;
@@ -28,14 +26,13 @@ public class GUI {
 	public static JLabel lblImageMain;
 	public static JLabel lblImageOlay;
 	public static JLabel lblInfoOne;
-	public static JButton btnLoad;
 	public static JButton btnSave;
 	public static JButton btnFeed;
 	public static JButton btnClean;
 	public static JLabel lblIconlower;
 	public static JLabel lblIconMid;
 	private static JButton btnScoop;
-	private static JTextField textField;
+	public static JTextField textField;
 	private static JLabel lblBanner;
 	public static JLabel lblInsightOne;
 	public static JLabel lblInsightTwo;
@@ -44,6 +41,7 @@ public class GUI {
 	public static JLabel lblHygiene;
 	public static JLabel lblBreadCount;
 	public static JLabel lblBed;
+	public static JLabel lblBowl;
 	
 	public static void main(String[] args) {
 		
@@ -81,6 +79,11 @@ public class GUI {
 		frmGUI.setBounds(100, 100, 616, 400);
 		frmGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGUI.getContentPane().setLayout(null);
+		/*------------------------------------------------------------------------------------------------------------*/		
+		lblBowl = new JLabel("bowl");
+		lblBowl.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bowl/bowlEmpty.png")));
+		lblBowl.setBounds(164, 174, 52, 36);
+		frmGUI.getContentPane().add(lblBowl);
 		/*------------------------------------------------------------------------------------------------------------*/
 		lblImageOlay = new JLabel("");									//Main image 'animation' area (Center Left)
 		lblImageOlay.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -109,7 +112,27 @@ public class GUI {
 		lblBed.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bed.png")));
 		lblBed.setBounds(100, 120, 94, 67);
 		frmGUI.getContentPane().add(lblBed);
-		textField = new JTextField();
+		/*------------------------------------------------------------------------------------------------------------*/
+		textField = new JTextField("Type here and press enter");
+		textField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+            	textField.setText("");
+			}
+		});
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+	            if(e.getKeyCode() == KeyEvent.VK_ENTER){
+	            	userInput = textField.getText();
+	            	userInputNew = true;
+	            	textField.setText("");
+	            	if (intro.introStep < 6) {intro.introStepper();}
+	            }
+				
+			}
+		});
 		textField.setBounds(10, 340, 300, 20);
 		frmGUI.getContentPane().add(textField);
 		textField.setColumns(10);
@@ -126,24 +149,8 @@ public class GUI {
 		lblInsightThree = new JLabel("insightThree");
 		lblInsightThree.setBounds(15, 264, 300, 25);
 		frmGUI.getContentPane().add(lblInsightThree);
-		btnSave.setBounds(506, 11, 34, 34);
+		btnSave.setBounds(86, 9, 34, 34);
 		frmGUI.getContentPane().add(btnSave);
-		/*------------------------------------------------------------------------------------------------------------*/
-		btnLoad = new JButton("");								
-		btnLoad.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Buttons/load.png")));
-		btnLoad.setBorderPainted(false);
-		btnLoad.setContentAreaFilled(false); 
-		btnLoad.setFocusPainted(false); 
-		btnLoad.setOpaque(false);
-		btnLoad.addMouseListener(new MouseAdapter() {					//	Reacts to a click
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Saving.readSave('C');
-				Saving.readSave('L');
-			}
-		});
-		btnLoad.setBounds(550, 11, 34, 34);
-		frmGUI.getContentPane().add(btnLoad);
 		/*------------------------------------------------------------------------------------------------------------*/
 		btnFeed = new JButton("");										
 		btnFeed.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Buttons/feed.png")));
@@ -185,7 +192,7 @@ public class GUI {
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			Saving.readSave('C');
-			Tools.logReader(Saving.vPetValue.get(0));
+			Logger.logReader(Saving.vPetValue.get(0));
 		}
 	});
 	btnLog.setFont(new Font("Tahoma", Font.PLAIN, 9));
@@ -221,7 +228,7 @@ public class GUI {
 	/*------------------------------------------------------------------------------------------------------------*/
 	lblBanner = new JLabel("");
 	lblBanner.setIcon(new ImageIcon(GUI.class.getResource("/resource/images/Environment/bannerHome.png")));
-	lblBanner.setBounds(493, 56, 107, 39);
+	lblBanner.setBounds(493, 9, 107, 39);
 	frmGUI.getContentPane().add(lblBanner);
 	/*------------------------------------------------------------------------------------------------------------*/
 	System.out.println("init bottom");
